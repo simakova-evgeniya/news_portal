@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,22 +16,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 Route::get('/hello/{name}', static function ($name) {
     return "Hello.{$name}";
 });
 
-Route::get('/info', static function () {
-    return 'это новостной портал';
+Route::get('/info', [IndexController::class, 'index'])
+->name('info');
+
+Route::group(['prefix' => ''], static function() {
+
+    Route::get('/news', [NewsController::class, 'index'])
+    ->name('news');
+
+    Route::get('/news/{id}/show', [NewsController::class, 'show'])
+    ->where('id','\d+')->name('news.show');
+
+    Route::post( '/createdNews', function() {
+        return Request::all();
+    })->name('created-news');
+
 });
 
-Route::get('/posts', static function () {
-    return 'список постов';
-});
+Route::group(['prefix' => ''], static function() {
 
-Route::get('/post/{id}', static function ($id) {
-    return 'пост #'. $id;
+    Route::get('/categories', [CategoryController::class, 'index'])
+    ->name('categories');
+
+    Route::get('/categories/{id}/show', [CategoryController::class, 'show'])
+    ->where('id', '\d+')->name('categories.show');
 });
