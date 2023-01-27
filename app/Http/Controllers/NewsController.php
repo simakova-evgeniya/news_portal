@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 
 class NewsController extends Controller
 {
     use NewsTrait;
 
-    public function index()
+    public function index(): View
     {
         
         return view('news.index', [
@@ -18,10 +18,10 @@ class NewsController extends Controller
         ]) ;
     }
 
-    public function show( int $id)
+    public function show( int $id): View
     { 
         return view('news.show', [
-        'news' =>  $this->getNews(),
+        'news' =>  $this->getNews($id),
       ]);
     }
 }

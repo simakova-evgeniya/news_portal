@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\IndexController as AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,12 @@ Route::get('/hello/{name}', static function ($name) {
 
 Route::get('/info', [IndexController::class, 'index'])
 ->name('info');
+
+//admin routes
+Route::group(['prefix' => 'admin'], static function() {
+    Route::get('/', AdminController::class)
+->name('admin.index');
+});
 
 Route::group(['prefix' => ''], static function() {
 
