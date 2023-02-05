@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\DataUploadController as AdminDataUploadController;
+use App\Http\Controllers\Admin\CallBackController as AdminCallBackController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
@@ -27,9 +31,14 @@ Route::get('/info', [IndexController::class, 'index'])
 ->name('info');
 
 //admin routes
-Route::group(['prefix' => 'admin'], static function() {
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], static function() {
     Route::get('/', AdminController::class)
-->name('admin.index');
+        ->name('index');
+    Route::resource('categories', AdminCategoryController::class);
+    Route::resource('news', AdminNewsController::class);
+    Route::resource('callBack', AdminCallBackController::class);
+    Route::resource('dataUpload', AdminDataUploadController::class);
+
 });
 
 Route::group(['prefix' => ''], static function() {
@@ -40,9 +49,6 @@ Route::group(['prefix' => ''], static function() {
     Route::get('/news/{id}/show', [NewsController::class, 'show'])
     ->where('id','\d+')->name('news.show');
 
-    Route::post( '/createdNews', function() {
-        return Request::all();
-    })->name('created-news');
 
 });
 

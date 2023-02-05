@@ -1,0 +1,10 @@
+
+USER: Евгения
+                        
+PHONE: 89111111111
+                        
+EMAIL: i@mail.ru
+                        
+DESCRIPTION: Проверка
+                        
+*******

@@ -13,10 +13,11 @@
             This week
           </button>
         </div>
+        
       </div>
 
       <div class="table-responsive">
-      
+      <x-alert type="danger" message = "Это информация"/>
       </div>
     </main>
     

@@ -1,8 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Admin;
+
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
@@ -10,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class NewsController extends Controller
+class CallBackController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +18,7 @@ class NewsController extends Controller
      */
     public function index(): View
     {
-        return \view('admin.news.index');
+        return \view('admin.callBack.index');
     }
 
     /**
@@ -29,23 +28,23 @@ class NewsController extends Controller
      */
     public function create(): View
     {
-      return \view('admin.news.create');
-        
+        return \view('admin.callBack.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
-     * @return JsonResponse
+     * @return Response
      */
     public function store(Request $request)
     {
-        //валидация в контроллере плохо
-        $request->validate([
-            'title' => 'required',
-        ]);
-       return response() -> json($request -> only(['title','short_description','full_description']));
+        //return $request->all();
+    
+        $data_string = "\nUSER: $request->name
+                        \nDESCRIPTION: $request->comment
+                        \n*******\n";
+        $file = file_put_contents("callBack/log_callBack.txt", $data_string, FILE_APPEND);
     }
 
     /**
