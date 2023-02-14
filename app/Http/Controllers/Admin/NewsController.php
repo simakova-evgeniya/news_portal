@@ -9,6 +9,7 @@ use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\News;
 
 class NewsController extends Controller
 {
@@ -19,7 +20,18 @@ class NewsController extends Controller
      */
     public function index(): View
     {
-        return \view('admin.news.index');
+        $model = new News();
+        $newsList = $model->getNews();
+        $join = \DB::table('news')
+            ->join('category_has_news as chn', 'news.id', '=', 'chn.news_id')
+            ->leftJoin('categories', 'chn.category_id', '=', 'categories.id')
+            ->select("news.*", 'chn.category_id', 'categories.title as ctitle')
+            ->get();
+            
+        return \view('admin.news.index',[
+            'newsList'=>$newsList ,       
+        ]);
+
     }
 
     /**
