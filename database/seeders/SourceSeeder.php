@@ -17,7 +17,7 @@ class SourceSeeder extends Seeder
      */
     public function run():void
     {
-        \DB::table('source')->insert($this->getData());
+        \DB::table('sources')->insert($this->getData());
     }
 
     public function getData(): array

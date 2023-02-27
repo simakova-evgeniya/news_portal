@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\JsonResponse;
+
 use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\News;
+use App\QueryBuilders\NewsQueryBuilder;
+use App\QueryBuilders\CategoriesQueryBuilder;
+use App\QueryBuilders\QueryBuilder;
+use App\Enums\NewsStatus;
+use Illuminate\Http\RedirectResponse;
 
 class NewsController extends Controller
 {
@@ -18,18 +23,13 @@ class NewsController extends Controller
      *
      * @return View
      */
-    public function index(): View
+    public function index( NewsQueryBuilder $newsQueryBuilder): View
     {
-        $model = new News();
-        $newsList = $model->getNews();
-        $join = \DB::table('news')
-            ->join('category_has_news as chn', 'news.id', '=', 'chn.news_id')
-            ->leftJoin('categories', 'chn.category_id', '=', 'categories.id')
-            ->select("news.*", 'chn.category_id', 'categories.title as ctitle')
-            ->get();
+
             
         return \view('admin.news.index',[
-            'newsList'=>$newsList ,       
+
+            'newsList'=>$newsQueryBuilder->getNewsWithPagination() ,
         ]);
 
     }
@@ -39,9 +39,13 @@ class NewsController extends Controller
      *
      * @return View
      */
-    public function create(): View
+    public function create(CategoriesQueryBuilder $categoriesQueryBuilder): View
     {
-      return \view('admin.news.create');
+       
+      return \view('admin.news.create',[
+              'categories' => $categoriesQueryBuilder->getAll(),
+              'statuses' => NewsStatus::all(),
+        ]);
         
     }
 
@@ -49,15 +53,21 @@ class NewsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
-     * @return JsonResponse
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         //валидация в контроллере плохо
         $request->validate([
             'title' => 'required',
         ]);
-       return response() -> json($request -> only(['title','short_description','full_description']));
+
+        $news = new News($request->except('_token', 'category_id'));
+
+        if ($news->save()) {
+            return redirect()->route('admin.news.index')->with('success','Новость успешно добавлена');
+        }
+        return \back()->with('error','Не удалось сохранить запись');
     }
 
     /**
@@ -66,7 +76,7 @@ class NewsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id):Response
     {
         //
     }
@@ -74,12 +84,17 @@ class NewsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  News $news
+     * @param  CategoriesQueryBuilder $categoriesQueryBuilder
      * @return Response
      */
-    public function edit($id)
+    public function edit(News $news,CategoriesQueryBuilder $categoriesQueryBuilder): View
     {
-        //
+        return \view('admin.news.edit',[
+            'news' => $news,
+            'categories' => $categoriesQueryBuilder->getAll(),
+            'statuses' => NewsStatus::all(),
+      ]);
     }
 
     /**
@@ -89,9 +104,15 @@ class NewsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,News $news): RedirectResponse
     {
-        //
+        $news = $news->fill($request->except('_token', 'category_ids'));
+        if ($news->save()) {
+            $news->categories()->sync((array) $request->input('category_ids'));
+            return redirect()->route('admin.news.index')->with('success','Новость успешно обновлена');
+        }
+        return \back()->with('error','Не удалось сохранить запись');
+
     }
 
     /**

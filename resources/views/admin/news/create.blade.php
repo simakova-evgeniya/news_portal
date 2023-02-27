@@ -11,18 +11,43 @@
         <form action = "{{route('admin.news.store')}}" method = "POST">
     @csrf
     <div class = "form-group">
+        <lable for = "category_id">Категория</lable>
+        <select class = "form-control" name = "category_id" id = "category_id">
+        <option value = "0">-- Выбрать --</option>
+        @foreach($categories as $category)
+            <option @if((int)old('category_id') === $category->id) selected @endif value="{{ $category->id }}">{{ $category->title }}</option>
+        @endforeach
+        </select>
+    </div>
+
+    <div class = "form-group">
         <lable for = "title">Название новости</lable>
         <input type = "text" name = "title" id = "title" value = "{{ old('title')}}" class = "form-control">
     </div>
 
     <div class = "form-group">
-        <lable for = "short_description">Краткое описание</lable>
-        <input type = "text" name = "short_description" id = "short_description" value = "{{ old('short_description')}}" class = "form-control">
+        <lable for = "autor">Автор</lable>
+        <input type = "text" name = "author" id = "author" value = "{{ old('author')}}" class = "form-control">
+    </div>
+
+     <div class = "form-group">
+        <lable for = "status">Статус</lable>
+        <select class = "form-control" name = "status" id = "status">
+        <option value = "0">-- Выбрать --</option>
+        @foreach($statuses as $status)
+            <option @selected(old('status') === $status)>{{ $status }}</option>
+        @endforeach
+        </select>
     </div>
 
     <div class = "form-group">
-        <lable for = "full_description">Подробное описание</lable>
-        <textarea name = "full_description" id = "full_description" value = "{{ old('full_description')}}" class = "form-control"></textarea>
+        <lable for = "image">Изображение</lable>
+        <input type = "file" name = "image" id = "image"  class = "form-control">
+    </div>
+
+    <div class = "form-group">
+        <lable for = "description">Подробное описание</lable>
+        <textarea name = "description" id = "description" class = "form-control">{{ old('description')}}</textarea>
     </div>
 
     <button type = "submit" class = "btn btn-success">Отправить</button>

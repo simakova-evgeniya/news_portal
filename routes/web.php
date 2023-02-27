@@ -60,3 +60,8 @@ Route::group(['prefix' => ''], static function() {
     Route::get('/categories/{id}/show', [CategoryController::class, 'show'])
     ->where('id', '\d+')->name('categories.show');
 });
+//collection
+Route::get('collection', function(){
+    $names = ['Ann', 'Sam', 'Jeck', 'Feeby', 'Andy'];
+    $collect = \collect($names);
+});
