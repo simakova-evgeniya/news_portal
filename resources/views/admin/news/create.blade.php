@@ -5,29 +5,31 @@
         <h1>Добавить новости</h1>
         @if($errors->any())
             @foreach($errors->all() as $error)
-            <x-alert type = "danger" : message = "$error"/>
+            <x-alert type = "danger" :message = "$error"/>
             @endforeach
         @endif
         <form action = "{{route('admin.news.store')}}" method = "POST">
     @csrf
     <div class = "form-group">
         <lable for = "category_id">Категория</lable>
-        <select class = "form-control" name = "category_id" id = "category_id">
+        <select class = "form-control" name = "category_ids[]" id = "category_ids" multiple>
         <option value = "0">-- Выбрать --</option>
         @foreach($categories as $category)
             <option @if((int)old('category_id') === $category->id) selected @endif value="{{ $category->id }}">{{ $category->title }}</option>
         @endforeach
         </select>
+        
     </div>
 
     <div class = "form-group">
         <lable for = "title">Название новости</lable>
-        <input type = "text" name = "title" id = "title" value = "{{ old('title')}}" class = "form-control">
+        <input type = "text" name = "title" id = "title" value = "{{ old('title')}}" class = "form-control" @error('title') is-invalid @enderror>
+        
     </div>
 
     <div class = "form-group">
         <lable for = "autor">Автор</lable>
-        <input type = "text" name = "author" id = "author" value = "{{ old('author')}}" class = "form-control">
+        <input type = "text" name = "author" id = "author" value = "{{ old('author')}}" class = "form-control" @error('author') is-invalid @enderror>
     </div>
 
      <div class = "form-group">
