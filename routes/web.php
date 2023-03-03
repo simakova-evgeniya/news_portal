@@ -9,6 +9,8 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\IndexController as AdminController;
+use App\Http\Controllers\Account\IndexController as AccountController;
+use App\Http\Controllers\Account\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,17 +23,18 @@ use App\Http\Controllers\Admin\IndexController as AdminController;
 |
 */
 
-
-
-Route::get('/hello/{name}', static function ($name) {
-    return "Hello.{$name}";
+Route::get('/', function () {
+    return view('welcome');
 });
+
+Route::group(['middleware'=>'auth'], static function(){
+Route::get('/logout',[LoginController::class,'logout'])->name('account.logout');
+Route::get('/account',AccountController::class)->name('account');
 
 Route::get('/info', [IndexController::class, 'index'])
 ->name('info');
 
-//admin routes
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], static function() {
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'is.admin'], static function() {
     Route::get('/', AdminController::class)
         ->name('index');
     Route::resource('categories', AdminCategoryController::class);
@@ -52,6 +55,9 @@ Route::group(['prefix' => ''], static function() {
 
 });
 
+});
+
+
 Route::group(['prefix' => ''], static function() {
 
     Route::get('/categories', [CategoryController::class, 'index'])
@@ -65,3 +71,6 @@ Route::get('collection', function(){
     $names = ['Ann', 'Sam', 'Jeck', 'Feeby', 'Andy'];
     $collect = \collect($names);
 });
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
