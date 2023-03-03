@@ -7,6 +7,8 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\LoginEvent;
+
 class LoginController extends Controller
 {
     /*
@@ -37,6 +39,21 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    public function username(): string
+    {
+        return 'email';
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+        event(new LoginEvent($user));
     }
 
     public function logout(Request $request)

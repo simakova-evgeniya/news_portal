@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\IndexController as AdminController;
 use App\Http\Controllers\Account\IndexController as AccountController;
 use App\Http\Controllers\Account\LoginController;
+use App\Http\Controllers\Admin\ParserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,7 @@ Route::get('/info', [IndexController::class, 'index'])
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'is.admin'], static function() {
     Route::get('/', AdminController::class)
         ->name('index');
+        Route::get('/parser',ParserController::class)->name('parser');
     Route::resource('categories', AdminCategoryController::class);
     Route::resource('news', AdminNewsController::class);
     Route::resource('callBack', AdminCallBackController::class);
